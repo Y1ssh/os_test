@@ -1,13 +1,12 @@
-// Minesweeper game application for Linux 95 Desktop
+// XMines - Authentic 1995 Linux Minesweeper game
 import { AppInterface, AppConfig } from '../types/app.js';
 import { createElement, addEventListenerWithCleanup } from '../utils/dom-helpers.js';
-import { aiService } from '../utils/ai-service.js';
 
 interface Cell {
   isMine: boolean;
   isRevealed: boolean;
   isFlagged: boolean;
-  adjacentMines: number;
+  neighborMines: number;
 }
 
 export class MinesweeperApp implements AppInterface {
@@ -17,111 +16,141 @@ export class MinesweeperApp implements AppInterface {
     icon: '💣',
     category: 'game',
     windowConfig: {
-      width: 400,
-      height: 450,
+      width: 400, // Sized for 1995 resolution
+      height: 480,
       resizable: false
     }
   };
 
   private element!: HTMLElement;
+  private toolbar!: HTMLElement;
   private gameBoard!: HTMLElement;
   private statusBar!: HTMLElement;
   private cleanupTasks: (() => void)[] = [];
-  private board: Cell[][] = [];
-  private rows = 9;
-  private cols = 9;
-  private mines = 10;
+  
+  private rows = 16;
+  private cols = 16;
+  private mineCount = 40;
+  private cells: Cell[][] = [];
   private gameState: 'playing' | 'won' | 'lost' = 'playing';
-  private flagsUsed = 0;
+  private flagCount = 0;
+  private startTime = 0;
+  private timer = 0;
 
   init(): void {
-    this.initializeBoard();
+    this.initializeGame();
   }
 
   render(): HTMLElement {
     this.element = createElement('div', 'minesweeper-app');
     
-    this.createHeader();
+    this.createToolbar();
     this.createGameBoard();
     this.createStatusBar();
-    this.renderBoard();
-
+    
     return this.element;
   }
 
-  private createHeader(): void {
-    const header = createElement('div', 'ms-header');
+  private createToolbar(): void {
+    this.toolbar = createElement('div', 'mines-toolbar');
     
-    const newGameBtn = createElement('button', 'ms-button', '🙂 New Game');
-    const hintBtn = createElement('button', 'ms-button', '💡 AI Hint');
-    
+    const newGameBtn = createElement('button', 'mines-btn', 'New Game');
+    const easyBtn = createElement('button', 'mines-btn', 'Easy');
+    const mediumBtn = createElement('button', 'mines-btn', 'Medium');
+    const hardBtn = createElement('button', 'mines-btn', 'Hard');
+
     addEventListenerWithCleanup(newGameBtn, 'click', () => {
       this.newGame();
     }, this.cleanupTasks);
 
-    addEventListenerWithCleanup(hintBtn, 'click', () => {
-      this.getAIHint();
+    addEventListenerWithCleanup(easyBtn, 'click', () => {
+      this.setDifficulty(9, 9, 10);
     }, this.cleanupTasks);
 
-    header.appendChild(newGameBtn);
-    header.appendChild(hintBtn);
-    this.element.appendChild(header);
+    addEventListenerWithCleanup(mediumBtn, 'click', () => {
+      this.setDifficulty(16, 16, 40);
+    }, this.cleanupTasks);
+
+    addEventListenerWithCleanup(hardBtn, 'click', () => {
+      this.setDifficulty(16, 30, 99);
+    }, this.cleanupTasks);
+
+    this.toolbar.appendChild(newGameBtn);
+    this.toolbar.appendChild(easyBtn);
+    this.toolbar.appendChild(mediumBtn);
+    this.toolbar.appendChild(hardBtn);
+    this.element.appendChild(this.toolbar);
   }
 
   private createGameBoard(): void {
-    this.gameBoard = createElement('div', 'ms-board');
-    this.gameBoard.style.gridTemplateColumns = `repeat(${this.cols}, 1fr)`;
+    this.gameBoard = createElement('div', 'mines-board');
+    this.gameBoard.style.gridTemplateColumns = `repeat(${this.cols}, 20px)`;
+    this.gameBoard.style.gridTemplateRows = `repeat(${this.rows}, 20px)`;
     this.element.appendChild(this.gameBoard);
+    this.renderBoard();
   }
 
   private createStatusBar(): void {
-    this.statusBar = createElement('div', 'ms-status');
+    this.statusBar = createElement('div', 'mines-status');
     this.element.appendChild(this.statusBar);
-    this.updateStatus();
+    this.updateStatusBar();
   }
 
-  private initializeBoard(): void {
-    // Initialize empty board
-    this.board = Array(this.rows).fill(null).map(() =>
-      Array(this.cols).fill(null).map(() => ({
-        isMine: false,
-        isRevealed: false,
-        isFlagged: false,
-        adjacentMines: 0
-      }))
-    );
+  private initializeGame(): void {
+    // Initialize cells
+    this.cells = [];
+    for (let row = 0; row < this.rows; row++) {
+      this.cells[row] = [];
+      for (let col = 0; col < this.cols; col++) {
+        this.cells[row][col] = {
+          isMine: false,
+          isRevealed: false,
+          isFlagged: false,
+          neighborMines: 0
+        };
+      }
+    }
 
     // Place mines randomly
     let minesPlaced = 0;
-    while (minesPlaced < this.mines) {
+    while (minesPlaced < this.mineCount) {
       const row = Math.floor(Math.random() * this.rows);
       const col = Math.floor(Math.random() * this.cols);
       
-      if (!this.board[row][col].isMine) {
-        this.board[row][col].isMine = true;
+      if (!this.cells[row][col].isMine) {
+        this.cells[row][col].isMine = true;
         minesPlaced++;
       }
     }
 
-    // Calculate adjacent mine counts
+    // Calculate neighbor mine counts
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
-        if (!this.board[row][col].isMine) {
-          this.board[row][col].adjacentMines = this.getAdjacentMines(row, col);
+        if (!this.cells[row][col].isMine) {
+          this.cells[row][col].neighborMines = this.countNeighborMines(row, col);
         }
       }
     }
 
     this.gameState = 'playing';
-    this.flagsUsed = 0;
+    this.flagCount = 0;
+    this.startTime = Date.now();
+    this.timer = 0;
   }
 
-  private getAdjacentMines(row: number, col: number): number {
+  private countNeighborMines(row: number, col: number): number {
     let count = 0;
-    for (let r = row - 1; r <= row + 1; r++) {
-      for (let c = col - 1; c <= col + 1; c++) {
-        if (r >= 0 && r < this.rows && c >= 0 && c < this.cols && this.board[r][c].isMine) {
-          count++;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        
+        const newRow = row + dr;
+        const newCol = col + dc;
+        
+        if (newRow >= 0 && newRow < this.rows && newCol >= 0 && newCol < this.cols) {
+          if (this.cells[newRow][newCol].isMine) {
+            count++;
+          }
         }
       }
     }
@@ -133,147 +162,157 @@ export class MinesweeperApp implements AppInterface {
     
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
-        const cell = this.createCellElement(row, col);
-        this.gameBoard.appendChild(cell);
+        const cell = this.cells[row][col];
+        const cellEl = createElement('div', 'mine-cell');
+        
+        cellEl.dataset.row = row.toString();
+        cellEl.dataset.col = col.toString();
+        
+        if (cell.isRevealed) {
+          cellEl.classList.add('revealed');
+          if (cell.isMine) {
+            cellEl.textContent = '💣';
+            cellEl.classList.add('mine');
+          } else if (cell.neighborMines > 0) {
+            cellEl.textContent = cell.neighborMines.toString();
+            cellEl.classList.add(`mines-${cell.neighborMines}`);
+          }
+        } else if (cell.isFlagged) {
+          cellEl.textContent = '🚩';
+          cellEl.classList.add('flagged');
+        }
+        
+        // Add event listeners
+        addEventListenerWithCleanup(cellEl, 'click', () => {
+          this.handleCellClick(row, col);
+        }, this.cleanupTasks);
+        
+        addEventListenerWithCleanup(cellEl, 'contextmenu', (e) => {
+          e.preventDefault();
+          this.handleCellRightClick(row, col);
+        }, this.cleanupTasks);
+        
+        this.gameBoard.appendChild(cellEl);
       }
     }
   }
 
-  private createCellElement(row: number, col: number): HTMLElement {
-    const cell = createElement('div', 'ms-cell');
-    const cellData = this.board[row][col];
+  private handleCellClick(row: number, col: number): void {
+    if (this.gameState !== 'playing') return;
     
-    if (cellData.isRevealed) {
-      cell.classList.add('revealed');
-      if (cellData.isMine) {
-        cell.textContent = '💣';
-        cell.classList.add('mine');
-      } else if (cellData.adjacentMines > 0) {
-        cell.textContent = cellData.adjacentMines.toString();
-        cell.className += ` number-${cellData.adjacentMines}`;
-      }
-    } else if (cellData.isFlagged) {
-      cell.textContent = '🚩';
-      cell.classList.add('flagged');
-    }
+    const cell = this.cells[row][col];
+    if (cell.isRevealed || cell.isFlagged) return;
+    
+    this.revealCell(row, col);
+    this.renderBoard();
+    this.checkGameEnd();
+    this.updateStatusBar();
+  }
 
-    addEventListenerWithCleanup(cell, 'click', () => {
-      if (this.gameState === 'playing' && !cellData.isFlagged) {
-        this.revealCell(row, col);
-      }
-    }, this.cleanupTasks);
-
-    addEventListenerWithCleanup(cell, 'contextmenu', (e) => {
-      e.preventDefault();
-      if (this.gameState === 'playing' && !cellData.isRevealed) {
-        this.toggleFlag(row, col);
-      }
-    }, this.cleanupTasks);
-
-    return cell;
+  private handleCellRightClick(row: number, col: number): void {
+    if (this.gameState !== 'playing') return;
+    
+    const cell = this.cells[row][col];
+    if (cell.isRevealed) return;
+    
+    cell.isFlagged = !cell.isFlagged;
+    this.flagCount += cell.isFlagged ? 1 : -1;
+    
+    this.renderBoard();
+    this.updateStatusBar();
   }
 
   private revealCell(row: number, col: number): void {
-    const cell = this.board[row][col];
-    
+    const cell = this.cells[row][col];
     if (cell.isRevealed || cell.isFlagged) return;
-
+    
     cell.isRevealed = true;
-
+    
     if (cell.isMine) {
       this.gameState = 'lost';
       this.revealAllMines();
-    } else if (cell.adjacentMines === 0) {
-      // Auto-reveal adjacent cells
-      for (let r = row - 1; r <= row + 1; r++) {
-        for (let c = col - 1; c <= col + 1; c++) {
-          if (r >= 0 && r < this.rows && c >= 0 && c < this.cols) {
-            this.revealCell(r, c);
+      return;
+    }
+    
+    // If cell has no neighbor mines, reveal all neighbors
+    if (cell.neighborMines === 0) {
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const newRow = row + dr;
+          const newCol = col + dc;
+          
+          if (newRow >= 0 && newRow < this.rows && newCol >= 0 && newCol < this.cols) {
+            this.revealCell(newRow, newCol);
           }
         }
       }
     }
-
-    this.checkWinCondition();
-    this.renderBoard();
-    this.updateStatus();
-  }
-
-  private toggleFlag(row: number, col: number): void {
-    const cell = this.board[row][col];
-    cell.isFlagged = !cell.isFlagged;
-    this.flagsUsed += cell.isFlagged ? 1 : -1;
-    this.renderBoard();
-    this.updateStatus();
   }
 
   private revealAllMines(): void {
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
-        if (this.board[row][col].isMine) {
-          this.board[row][col].isRevealed = true;
+        if (this.cells[row][col].isMine) {
+          this.cells[row][col].isRevealed = true;
         }
       }
     }
   }
 
-  private checkWinCondition(): void {
-    let revealedCells = 0;
+  private checkGameEnd(): void {
+    if (this.gameState !== 'playing') return;
+    
+    let revealedCount = 0;
     for (let row = 0; row < this.rows; row++) {
       for (let col = 0; col < this.cols; col++) {
-        if (this.board[row][col].isRevealed && !this.board[row][col].isMine) {
-          revealedCells++;
+        if (this.cells[row][col].isRevealed && !this.cells[row][col].isMine) {
+          revealedCount++;
         }
       }
     }
-
-    if (revealedCells === (this.rows * this.cols) - this.mines) {
+    
+    const totalNonMines = this.rows * this.cols - this.mineCount;
+    if (revealedCount === totalNonMines) {
       this.gameState = 'won';
     }
   }
 
+  private setDifficulty(rows: number, cols: number, mines: number): void {
+    this.rows = rows;
+    this.cols = cols;
+    this.mineCount = mines;
+    
+    // Update board size
+    this.gameBoard.style.gridTemplateColumns = `repeat(${this.cols}, 20px)`;
+    this.gameBoard.style.gridTemplateRows = `repeat(${this.rows}, 20px)`;
+    
+    this.newGame();
+  }
+
   private newGame(): void {
-    this.initializeBoard();
+    this.initializeGame();
     this.renderBoard();
-    this.updateStatus();
+    this.updateStatusBar();
   }
 
-  private updateStatus(): void {
-    const remaining = this.mines - this.flagsUsed;
-    let status = `Mines: ${remaining}`;
+  private updateStatusBar(): void {
+    const minesLeft = this.mineCount - this.flagCount;
+    this.timer = this.gameState === 'playing' ? Math.floor((Date.now() - this.startTime) / 1000) : this.timer;
     
-    if (this.gameState === 'won') {
-      status += ' - 🎉 You Win!';
-    } else if (this.gameState === 'lost') {
-      status += ' - 💥 Game Over';
+    let status = '';
+    switch (this.gameState) {
+      case 'playing':
+        status = `Mines: ${minesLeft} | Time: ${this.timer}s | Right-click to flag`;
+        break;
+      case 'won':
+        status = `🎉 You Won! | Time: ${this.timer}s | Click New Game to play again`;
+        break;
+      case 'lost':
+        status = `💥 Game Over! | Time: ${this.timer}s | Click New Game to try again`;
+        break;
     }
-
+    
     this.statusBar.textContent = status;
-  }
-
-  private async getAIHint(): Promise<void> {
-    if (this.gameState !== 'playing') return;
-
-    const boardState = this.getBoardStateString();
-    const hint = await aiService.getMinesweeperHint(boardState);
-    
-    // Show hint in a temporary popup
-    const hintPopup = createElement('div', 'hint-popup');
-    hintPopup.textContent = hint;
-    
-    this.element.appendChild(hintPopup);
-    setTimeout(() => hintPopup.remove(), 3000);
-  }
-
-  private getBoardStateString(): string {
-    return this.board.map(row =>
-      row.map(cell => {
-        if (cell.isFlagged) return 'F';
-        if (!cell.isRevealed) return '?';
-        if (cell.isMine) return '*';
-        return cell.adjacentMines.toString();
-      }).join('')
-    ).join('\n');
   }
 
   cleanup(): void {

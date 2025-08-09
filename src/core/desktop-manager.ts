@@ -12,6 +12,7 @@ export class DesktopManager {
   private isInitialized = false;
   private cleanupTasks: (() => void)[] = [];
   private selectedIcon: HTMLElement | null = null;
+  private dragState = { isDragging: false, element: null as HTMLElement | null, startX: 0, startY: 0 };
 
   async init(): Promise<void> {
     if (this.isInitialized) return;
@@ -43,20 +44,21 @@ export class DesktopManager {
 
   private registerLinuxApplications(): void {
     // Register authentic 1995 Linux applications with lazy loading
-    // Make sure IDs match the data-app attributes in HTML
     appRegistry.register('terminal', () => import('../apps/terminal.js').then(m => new m.TerminalApp()));
     appRegistry.register('fileManager', () => import('../apps/file-manager.js').then(m => new m.FileManagerApp()));
     appRegistry.register('textEditor', () => import('../apps/text-editor.js').then(m => new m.TextEditorApp()));
     appRegistry.register('imageViewer', () => import('../apps/image-viewer.js').then(m => new m.ImageViewerApp()));
     
-    // Authentic Linux X11 applications - using exact data-app names from HTML
+    // Authentic Linux X11 applications
     appRegistry.register('xeyes', () => import('../apps/xeyes.js').then(m => new m.XEyesApp()));
     appRegistry.register('xcalc', () => import('../apps/xcalc.js').then(m => new m.XCalcApp()));
     appRegistry.register('mosaic', () => import('../apps/mosaic.js').then(m => new m.MosaicApp()));
     appRegistry.register('pine', () => import('../apps/pine.js').then(m => new m.PineApp()));
     
-    // Minesweeper - using exact data-app name from HTML
+    // Keep minesweeper as it existed in 1995
     appRegistry.register('minesweeper', () => import('../apps/minesweeper.js').then(m => new m.MinesweeperApp()));
+    
+    console.log('📱 Registered all Linux 95 applications');
   }
 
   private initializeLinuxComponents(): void {
@@ -89,15 +91,15 @@ export class DesktopManager {
     // Add trash icon if it doesn't exist
     this.addTrashIcon();
 
-    // Setup icon interactions for ALL desktop icons
+    // Setup icon interactions with drag and drop
     const iconElements = document.querySelectorAll('.icon[data-app]');
     iconElements.forEach(iconEl => {
       const icon = iconEl as HTMLElement;
       const appId = icon.dataset.app;
       if (!appId) return;
 
-      // Make icons draggable
-      this.makeDraggable(icon);
+      // Make icon draggable
+      this.makeIconDraggable(icon);
 
       // Single click selection
       icon.addEventListener('click', (e) => {
@@ -123,69 +125,56 @@ export class DesktopManager {
     }
   }
 
-  private makeDraggable(icon: HTMLElement): void {
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let initialLeft = 0;
-    let initialTop = 0;
+  private makeIconDraggable(icon: HTMLElement): void {
+    icon.style.position = 'absolute';
+    icon.style.cursor = 'pointer';
+    
+    // Get initial position
+    const rect = icon.getBoundingClientRect();
+    const desktop = document.querySelector('.desktop') as HTMLElement;
+    const desktopRect = desktop.getBoundingClientRect();
+    
+    icon.style.left = `${rect.left - desktopRect.left}px`;
+    icon.style.top = `${rect.top - desktopRect.top}px`;
 
-    icon.addEventListener('mousedown', (e) => {
-      const mouseEvent = e as MouseEvent;
+    icon.addEventListener('mousedown', (e: MouseEvent) => {
+      if (e.button !== 0) return; // Only left mouse button
       
-      // Only start drag on left mouse button
-      if (mouseEvent.button !== 0) return;
+      e.preventDefault();
+      this.dragState.isDragging = true;
+      this.dragState.element = icon;
+      this.dragState.startX = e.clientX - parseInt(icon.style.left || '0');
+      this.dragState.startY = e.clientY - parseInt(icon.style.top || '0');
       
-      isDragging = true;
-      startX = mouseEvent.clientX;
-      startY = mouseEvent.clientY;
-      
-      // Get current position
-      const rect = icon.getBoundingClientRect();
-      const desktopRect = document.querySelector('.desktop')!.getBoundingClientRect();
-      initialLeft = rect.left - desktopRect.left;
-      initialTop = rect.top - desktopRect.top;
-      
-      icon.style.position = 'absolute';
-      icon.style.left = `${initialLeft}px`;
-      icon.style.top = `${initialTop}px`;
       icon.style.zIndex = '1000';
-      icon.style.cursor = 'grabbing';
-      
-      // Prevent text selection
-      mouseEvent.preventDefault();
+      document.body.style.cursor = 'grabbing';
     });
 
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
+    // Global mouse events for dragging
+    document.addEventListener('mousemove', (e: MouseEvent) => {
+      if (!this.dragState.isDragging || this.dragState.element !== icon) return;
       
-      const mouseEvent = e as MouseEvent;
-      const deltaX = mouseEvent.clientX - startX;
-      const deltaY = mouseEvent.clientY - startY;
+      e.preventDefault();
+      const desktop = document.querySelector('.desktop') as HTMLElement;
+      const desktopRect = desktop.getBoundingClientRect();
       
-      const newLeft = initialLeft + deltaX;
-      const newTop = initialTop + deltaY;
+      let newX = e.clientX - this.dragState.startX;
+      let newY = e.clientY - this.dragState.startY;
       
       // Keep icon within desktop bounds
-      const desktop = document.querySelector('.desktop')!;
-      const desktopRect = desktop.getBoundingClientRect();
-      const iconRect = icon.getBoundingClientRect();
+      newX = Math.max(0, Math.min(newX, desktopRect.width - icon.offsetWidth));
+      newY = Math.max(0, Math.min(newY, desktopRect.height - icon.offsetHeight));
       
-      const maxLeft = desktopRect.width - iconRect.width;
-      const maxTop = desktopRect.height - iconRect.height;
-      
-      const clampedLeft = Math.max(0, Math.min(newLeft, maxLeft));
-      const clampedTop = Math.max(0, Math.min(newTop, maxTop));
-      
-      icon.style.left = `${clampedLeft}px`;
-      icon.style.top = `${clampedTop}px`;
+      icon.style.left = `${newX}px`;
+      icon.style.top = `${newY}px`;
     });
 
     document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        icon.style.cursor = 'pointer';
-        icon.style.zIndex = 'auto';
+      if (this.dragState.element === icon) {
+        this.dragState.isDragging = false;
+        this.dragState.element = null;
+        icon.style.zIndex = '';
+        document.body.style.cursor = '';
       }
     });
   }
@@ -212,13 +201,16 @@ export class DesktopManager {
     const trashIcon = document.createElement('div');
     trashIcon.className = 'icon';
     trashIcon.dataset.app = 'trash';
+    trashIcon.style.position = 'absolute';
+    trashIcon.style.right = '20px';
+    trashIcon.style.bottom = '60px';
     trashIcon.innerHTML = `
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23C0C0C0' stroke='%23000' stroke-width='2'/%3E%3Crect x='12' y='16' width='24' height='24' fill='%23808080' stroke='%23000'/%3E%3Crect x='16' y='8' width='16' height='4' fill='%23A0A0A0' stroke='%23000'/%3E%3Cline x1='18' y1='20' x2='18' y2='32' stroke='%23000' stroke-width='2'/%3E%3Cline x1='24' y1='20' x2='24' y2='32' stroke='%23000' stroke-width='2'/%3E%3Cline x1='30' y1='20' x2='30' y2='32' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E" alt="Trash" />
       <span>Trash</span>
     `;
 
     // Make trash draggable too
-    this.makeDraggable(trashIcon);
+    this.makeIconDraggable(trashIcon);
 
     // Add to icon setup
     trashIcon.addEventListener('click', (e) => {
@@ -307,7 +299,7 @@ export class DesktopManager {
         return;
       }
       
-      console.log(`Opening app: ${appId}`);
+      console.log(`🚀 Opening app: ${appId}`);
       await appRegistry.openApp(appId);
     } catch (error) {
       console.error(`Failed to open app ${appId}:`, error);
@@ -320,7 +312,6 @@ export class DesktopManager {
           <div class="x11-error-message">
             <p>Could not launch application: ${appId}</p>
             <p>The application may not be available or there was an error loading it.</p>
-            <p>Error: ${error}</p>
           </div>
           <div class="x11-error-buttons">
             <button onclick="this.closest('.x11-error').remove()">OK</button>
@@ -343,7 +334,6 @@ export class DesktopManager {
     this.contextMenu?.cleanup();
     appRegistry.cleanup();
     windowSystem.cleanup();
-    eventBus.cleanup();
     
     this.cleanupTasks.forEach(task => task());
     this.cleanupTasks = [];

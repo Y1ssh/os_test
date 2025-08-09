@@ -1,16 +1,33 @@
-// Application registry with lazy loading for Linux 95 Desktop
-import { AppInterface, AppInstance, AppConfig, AppRegistryInterface, AppLoader } from '../types/app.js';
-import { WindowConfig } from '../types/window.js';
+// Application registry for managing app loading and lifecycle
 import { eventBus } from './event-bus.js';
-import { windowSystem } from './window-system.js';
+import { windowSystem, WindowConfig } from './window-system.js';
+import { AppInterface, AppConfig } from '../types/app.js';
+
+export type AppLoader = () => Promise<AppInterface>;
+
+export interface AppInstance {
+  id: string;
+  config: AppConfig;
+  windowId?: string;
+  isRunning: boolean;
+  element: HTMLElement;
+}
+
+export interface AppRegistryInterface {
+  register(appId: string, loader: AppLoader): void;
+  openApp(appId: string): Promise<AppInstance | null>;
+  closeApp(appId: string): void;
+  cleanup(): void;
+}
 
 class AppRegistry implements AppRegistryInterface {
   private loaders: Map<string, AppLoader> = new Map();
-  private instances: Map<string, AppInstance> = new Map();
   private loadedApps: Map<string, AppInterface> = new Map();
+  private instances: Map<string, AppInstance> = new Map();
 
   register(appId: string, loader: AppLoader): void {
     this.loaders.set(appId, loader);
+    console.log(`📱 Registered app: ${appId}`);
   }
 
   async openApp(appId: string): Promise<AppInstance | null> {
@@ -33,6 +50,7 @@ class AppRegistry implements AppRegistryInterface {
           return null;
         }
         
+        console.log(`🚀 Loading app: ${appId}`);
         app = await loader();
         this.loadedApps.set(appId, app);
       }
@@ -80,38 +98,24 @@ class AppRegistry implements AppRegistryInterface {
 
   closeApp(appId: string): void {
     const instance = this.instances.get(appId);
-    if (!instance) return;
+    if (instance) {
+      // Cleanup app if it has a cleanup method
+      const app = this.loadedApps.get(appId);
+      if (app && typeof app.cleanup === 'function') {
+        app.cleanup();
+      }
 
-    const app = this.loadedApps.get(appId);
-    if (app) {
-      app.cleanup();
+      instance.isRunning = false;
+      this.instances.delete(appId);
+      eventBus.emit('app:closed', { appId });
     }
-
-    if (instance.windowId) {
-      windowSystem.closeWindow(instance.windowId);
-    }
-
-    instance.isRunning = false;
-    this.instances.delete(appId);
-    eventBus.emit('app:closed', { appId });
-  }
-
-  getApp(appId: string): AppInstance | null {
-    return this.instances.get(appId) || null;
-  }
-
-  getAllApps(): AppInstance[] {
-    return Array.from(this.instances.values());
-  }
-
-  isAppRunning(appId: string): boolean {
-    const instance = this.instances.get(appId);
-    return instance?.isRunning || false;
   }
 
   cleanup(): void {
-    this.instances.forEach((_, appId) => this.closeApp(appId));
-    this.instances.clear();
+    this.instances.forEach((instance, appId) => {
+      this.closeApp(appId);
+    });
+    this.loaders.clear();
     this.loadedApps.clear();
   }
 }
