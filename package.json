@@ -1,12 +1,15 @@
 {
   "name": "linux-95",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "A modular Linux 95 desktop simulator with authentic 1995 UI/UX",
+  "main": "index-new.tsx",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "vite --config vite.config.ts",
+    "build": "vite build --config vite.config.ts",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "0.7.0",
@@ -17,5 +20,16 @@
     "@types/node": "^22.14.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
-  }
+  },
+  "keywords": [
+    "linux",
+    "retro",
+    "desktop",
+    "simulator",
+    "1995",
+    "vintage",
+    "gui"
+  ],
+  "author": "Linux 95 Project",
+  "license": "MIT"
 }

@@ -882,9 +882,9 @@ function initMinesweeperGame(windowElement: HTMLDivElement): void {
                     hintText = getFallbackResponse('minesweeper');
                 } else {
                     // Use real AI
-                    const boardState = getBoardStateAsText();
-                    const prompt = `Minesweeper state:\n${boardState}\nShort, witty hint (1-2 sentences) for a safe move or dangerous area. Don't reveal exact mines unless certain. Hint:`;
-                    // @ts-ignore
+            const boardState = getBoardStateAsText();
+            const prompt = `Minesweeper state:\n${boardState}\nShort, witty hint (1-2 sentences) for a safe move or dangerous area. Don't reveal exact mines unless certain. Hint:`;
+             // @ts-ignore
                     const result = await geminiInstance.models.generateContent({ 
                         model: "gemini-2.5-flash", 
                         contents: [{role:"user", parts:[{text:prompt}]}], 
@@ -1211,7 +1211,7 @@ async function initializeGeminiIfNeeded(context: string): Promise<boolean> {
         
         // Try to get API key from various sources
         try {
-            // @ts-ignore
+        // @ts-ignore
             apiKey = process.env.GEMINI_API_KEY || "";
         } catch (e) {
             // Running in browser, no process.env

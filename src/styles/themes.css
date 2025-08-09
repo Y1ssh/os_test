@@ -1,0 +1,43 @@
+/* Linux 95 Theme Variables */
+:root {
+  /* Core Colors */
+  --linux-bg: #2F4F4F;
+  --window-bg: #C0C0C0;
+  --accent: #000080;
+  --text-primary: #000000;
+  --text-light: #FFFFFF;
+  
+  /* Window 3D Effects */
+  --raised-light: #DFDFDF;
+  --raised-dark: #404040;
+  --pressed-light: #808080;
+  --pressed-dark: #000000;
+  
+  /* Interactive Colors */
+  --selection-bg: rgba(0, 0, 128, 0.2);
+  --selection-border: rgba(255, 255, 255, 0.7);
+  --hover-bg: rgba(0, 0, 128, 0.1);
+  
+  /* Typography */
+  --font-system: 'MS Sans Serif', 'Tahoma', sans-serif;
+  --font-mono: 'Lucida Console', 'Courier New', monospace;
+  --font-symbols: 'Marlett', system-ui;
+  
+  /* Sizes */
+  --window-titlebar-height: 18px;
+  --taskbar-height: 28px;
+  --icon-size: 48px;
+  --button-padding: 2px 4px;
+  
+  /* Terminal Colors */
+  --terminal-bg: #000000;
+  --terminal-text: #00FF00;
+  --terminal-cursor: #FFFFFF;
+  
+  /* Z-Index Layers */
+  --z-desktop: 1;
+  --z-windows: 100;
+  --z-taskbar: 1000;
+  --z-start-menu: 1100;
+  --z-modals: 2000;
+} 

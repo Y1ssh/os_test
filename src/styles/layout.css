@@ -1,0 +1,113 @@
+/* Linux 95 Desktop Layout */
+
+/* Global Reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-system);
+  background: var(--linux-bg);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Desktop Layout */
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  cursor: default;
+  padding: 15px 15px 50px 15px;
+  background: var(--linux-bg);
+}
+
+/* Taskbar Layout */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--taskbar-height);
+  background: var(--window-bg);
+  border-top: 2px solid var(--raised-light);
+  border-left: 2px solid var(--raised-light);
+  border-right: 2px solid var(--raised-dark);
+  border-bottom: 2px solid var(--raised-dark);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  z-index: var(--z-taskbar);
+  font-size: 11px;
+}
+
+.taskbar-apps {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+}
+
+.taskbar-clock {
+  padding: 2px 8px;
+  border-top: 1px solid var(--pressed-dark);
+  border-left: 1px solid var(--pressed-dark);
+  border-right: 1px solid var(--raised-light);
+  border-bottom: 1px solid var(--raised-light);
+  background: var(--window-bg);
+  font-size: 10px;
+}
+
+/* Start Menu Layout */
+.start-menu {
+  position: fixed;
+  bottom: var(--taskbar-height);
+  left: 2px;
+  width: 200px;
+  background: var(--window-bg);
+  border-top: 2px solid var(--raised-light);
+  border-left: 2px solid var(--raised-light);
+  border-right: 2px solid var(--raised-dark);
+  border-bottom: 2px solid var(--raised-dark);
+  z-index: var(--z-start-menu);
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+/* Icon Grid Layout */
+.icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 12px 8px;
+  cursor: pointer;
+  width: 80px;
+  text-align: center;
+}
+
+/* Modal Layout */
+.modal, .ai-suggestion-modal, .open-image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modals);
+}
+
+.modal-content {
+  background: var(--window-bg);
+  border-top: 2px solid var(--raised-light);
+  border-left: 2px solid var(--raised-light);
+  border-right: 2px solid var(--raised-dark);
+  border-bottom: 2px solid var(--raised-dark);
+  max-width: 400px;
+  min-width: 300px;
+} 
