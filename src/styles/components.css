@@ -661,3 +661,199 @@ button:disabled, .button:disabled {
   justify-content: flex-end;
   gap: 12px;
 } 
+
+/* Updated Image Viewer Components - Bigger */
+.image-viewer-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--window-bg);
+}
+
+.image-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-bottom: 1px solid var(--raised-dark);
+  background: var(--window-bg);
+  align-items: center;
+}
+
+.image-btn {
+  font-size: var(--font-size-small);
+  padding: 4px 8px;
+  border: 1px outset var(--window-bg);
+  background: var(--window-bg);
+  cursor: pointer;
+}
+
+.image-btn:active {
+  border: 1px inset var(--window-bg);
+}
+
+.file-info {
+  margin-left: auto;
+  font-size: var(--font-size-small);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  padding: 0 8px;
+}
+
+.image-container {
+  flex: 1;
+  overflow: auto;
+  background: #FFFFFF;
+  border: 2px inset var(--window-bg);
+  margin: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-display {
+  text-align: center;
+  padding: 12px;
+}
+
+.main-image {
+  max-width: 100%;
+  max-height: 400px;
+  border: 1px solid #808080;
+  image-rendering: auto;
+  transition: transform 0.2s ease;
+}
+
+.image-caption {
+  margin-top: 12px;
+  font-size: var(--font-size-small);
+  color: var(--text-primary);
+  font-family: var(--font-motif);
+  line-height: 1.4;
+}
+
+.image-caption strong {
+  font-weight: bold;
+  font-family: var(--font-mono);
+}
+
+/* Minesweeper Components - Bigger and Authentic */
+.minesweeper-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--window-bg);
+  padding: 6px;
+}
+
+.mine-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--window-bg);
+  border: 2px inset var(--window-bg);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-normal);
+}
+
+.mine-counter, .mine-timer {
+  background: #000000;
+  color: #FF0000;
+  padding: 4px 8px;
+  border: 1px inset var(--window-bg);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-large);
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+.mine-board {
+  display: grid;
+  gap: 0;
+  border: 3px inset var(--window-bg);
+  background: var(--window-bg);
+  padding: 4px;
+  margin: 0 auto;
+}
+
+.mine-cell {
+  width: 24px; /* Bigger cells for 1995 resolution */
+  height: 24px;
+  border: 2px outset var(--window-bg);
+  background: var(--window-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-normal);
+  font-weight: bold;
+  user-select: none;
+}
+
+.mine-cell.revealed {
+  border: 1px solid var(--raised-dark);
+  background: #C8C8C8;
+}
+
+.mine-cell.flagged {
+  background: var(--window-bg);
+  color: #FF0000;
+}
+
+.mine-cell.mine {
+  background: #FF0000;
+  color: #000000;
+}
+
+.mine-cell:active {
+  border: 2px inset var(--window-bg);
+}
+
+/* Number colors for mine cells */
+.mine-cell[data-count="1"] { color: #0000FF; }
+.mine-cell[data-count="2"] { color: #008000; }
+.mine-cell[data-count="3"] { color: #FF0000; }
+.mine-cell[data-count="4"] { color: #000080; }
+.mine-cell[data-count="5"] { color: #800000; }
+.mine-cell[data-count="6"] { color: #008080; }
+.mine-cell[data-count="7"] { color: #000000; }
+.mine-cell[data-count="8"] { color: #808080; }
+
+.mine-controls {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.mine-button {
+  padding: 4px 12px;
+  border: 2px outset var(--window-bg);
+  background: var(--window-bg);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
+.mine-button:active {
+  border: 2px inset var(--window-bg);
+}
+
+/* Game status messages */
+.mine-status-message {
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-size: var(--font-size-normal);
+}
+
+.mine-status-message.won {
+  color: #008000;
+}
+
+.mine-status-message.lost {
+  color: #FF0000;
+} 

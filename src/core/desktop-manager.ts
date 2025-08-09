@@ -43,18 +43,19 @@ export class DesktopManager {
 
   private registerLinuxApplications(): void {
     // Register authentic 1995 Linux applications with lazy loading
+    // Make sure IDs match the data-app attributes in HTML
     appRegistry.register('terminal', () => import('../apps/terminal.js').then(m => new m.TerminalApp()));
     appRegistry.register('fileManager', () => import('../apps/file-manager.js').then(m => new m.FileManagerApp()));
     appRegistry.register('textEditor', () => import('../apps/text-editor.js').then(m => new m.TextEditorApp()));
     appRegistry.register('imageViewer', () => import('../apps/image-viewer.js').then(m => new m.ImageViewerApp()));
     
-    // Authentic Linux X11 applications
+    // Authentic Linux X11 applications - using exact data-app names from HTML
     appRegistry.register('xeyes', () => import('../apps/xeyes.js').then(m => new m.XEyesApp()));
     appRegistry.register('xcalc', () => import('../apps/xcalc.js').then(m => new m.XCalcApp()));
     appRegistry.register('mosaic', () => import('../apps/mosaic.js').then(m => new m.MosaicApp()));
     appRegistry.register('pine', () => import('../apps/pine.js').then(m => new m.PineApp()));
     
-    // Keep minesweeper as it existed in 1995
+    // Minesweeper - using exact data-app name from HTML
     appRegistry.register('minesweeper', () => import('../apps/minesweeper.js').then(m => new m.MinesweeperApp()));
   }
 
@@ -88,12 +89,15 @@ export class DesktopManager {
     // Add trash icon if it doesn't exist
     this.addTrashIcon();
 
-    // Setup icon interactions
+    // Setup icon interactions for ALL desktop icons
     const iconElements = document.querySelectorAll('.icon[data-app]');
     iconElements.forEach(iconEl => {
       const icon = iconEl as HTMLElement;
       const appId = icon.dataset.app;
       if (!appId) return;
+
+      // Make icons draggable
+      this.makeDraggable(icon);
 
       // Single click selection
       icon.addEventListener('click', (e) => {
@@ -117,6 +121,73 @@ export class DesktopManager {
         }
       });
     }
+  }
+
+  private makeDraggable(icon: HTMLElement): void {
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    icon.addEventListener('mousedown', (e) => {
+      const mouseEvent = e as MouseEvent;
+      
+      // Only start drag on left mouse button
+      if (mouseEvent.button !== 0) return;
+      
+      isDragging = true;
+      startX = mouseEvent.clientX;
+      startY = mouseEvent.clientY;
+      
+      // Get current position
+      const rect = icon.getBoundingClientRect();
+      const desktopRect = document.querySelector('.desktop')!.getBoundingClientRect();
+      initialLeft = rect.left - desktopRect.left;
+      initialTop = rect.top - desktopRect.top;
+      
+      icon.style.position = 'absolute';
+      icon.style.left = `${initialLeft}px`;
+      icon.style.top = `${initialTop}px`;
+      icon.style.zIndex = '1000';
+      icon.style.cursor = 'grabbing';
+      
+      // Prevent text selection
+      mouseEvent.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      const mouseEvent = e as MouseEvent;
+      const deltaX = mouseEvent.clientX - startX;
+      const deltaY = mouseEvent.clientY - startY;
+      
+      const newLeft = initialLeft + deltaX;
+      const newTop = initialTop + deltaY;
+      
+      // Keep icon within desktop bounds
+      const desktop = document.querySelector('.desktop')!;
+      const desktopRect = desktop.getBoundingClientRect();
+      const iconRect = icon.getBoundingClientRect();
+      
+      const maxLeft = desktopRect.width - iconRect.width;
+      const maxTop = desktopRect.height - iconRect.height;
+      
+      const clampedLeft = Math.max(0, Math.min(newLeft, maxLeft));
+      const clampedTop = Math.max(0, Math.min(newTop, maxTop));
+      
+      icon.style.left = `${clampedLeft}px`;
+      icon.style.top = `${clampedTop}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        icon.style.cursor = 'pointer';
+        icon.style.zIndex = 'auto';
+      }
+    });
   }
 
   private selectIcon(icon: HTMLElement): void {
@@ -145,6 +216,9 @@ export class DesktopManager {
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23C0C0C0' stroke='%23000' stroke-width='2'/%3E%3Crect x='12' y='16' width='24' height='24' fill='%23808080' stroke='%23000'/%3E%3Crect x='16' y='8' width='16' height='4' fill='%23A0A0A0' stroke='%23000'/%3E%3Cline x1='18' y1='20' x2='18' y2='32' stroke='%23000' stroke-width='2'/%3E%3Cline x1='24' y1='20' x2='24' y2='32' stroke='%23000' stroke-width='2'/%3E%3Cline x1='30' y1='20' x2='30' y2='32' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E" alt="Trash" />
       <span>Trash</span>
     `;
+
+    // Make trash draggable too
+    this.makeDraggable(trashIcon);
 
     // Add to icon setup
     trashIcon.addEventListener('click', (e) => {
@@ -232,6 +306,8 @@ export class DesktopManager {
         this.openTrash();
         return;
       }
+      
+      console.log(`Opening app: ${appId}`);
       await appRegistry.openApp(appId);
     } catch (error) {
       console.error(`Failed to open app ${appId}:`, error);
@@ -244,6 +320,7 @@ export class DesktopManager {
           <div class="x11-error-message">
             <p>Could not launch application: ${appId}</p>
             <p>The application may not be available or there was an error loading it.</p>
+            <p>Error: ${error}</p>
           </div>
           <div class="x11-error-buttons">
             <button onclick="this.closest('.x11-error').remove()">OK</button>
