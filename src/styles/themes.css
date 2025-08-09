@@ -19,16 +19,29 @@
   --selection-border: rgba(255, 255, 255, 0.8);
   --hover-bg: rgba(0, 0, 128, 0.1);
   
-  /* Typography - Authentic X11 Fonts */
+  /* Typography - Authentic X11 Fonts - Larger for 1995 resolution */
   --font-system: 'Helvetica', 'Arial', sans-serif; /* X11 default */
   --font-mono: 'Courier', 'Courier New', monospace;
   --font-motif: 'Helvetica', 'Arial', sans-serif; /* Motif widgets */
+  --font-size-normal: 14px; /* Larger base font */
+  --font-size-small: 12px;
+  --font-size-large: 16px;
   
-  /* Sizes - X11/Motif Standards */
-  --window-titlebar-height: 20px; /* Motif standard */
-  --panel-height: 30px; /* Panel, not taskbar */
-  --icon-size: 48px;
-  --button-padding: 4px 8px; /* More generous Motif padding */
+  /* Sizes - Scaled for 1995 Resolution (800x600 / 1024x768) */
+  --window-titlebar-height: 24px; /* Bigger titlebar */
+  --panel-height: 36px; /* Bigger panel */
+  --icon-size: 64px; /* Much larger icons */
+  --icon-spacing: 20px; /* More space between icons */
+  --button-padding: 6px 12px; /* Bigger buttons */
+  --window-border-width: 3px; /* Thicker borders */
+  
+  /* Default Window Sizes - Much Larger */
+  --window-width-small: 480px;
+  --window-width-medium: 640px;
+  --window-width-large: 800px;
+  --window-height-small: 360px;
+  --window-height-medium: 480px;
+  --window-height-large: 600px;
   
   /* Terminal Colors - X11 XTerm defaults */
   --terminal-bg: #000000;

@@ -1,4 +1,4 @@
-// Terminal application for Linux 95 Desktop
+// XTerm application with larger 1995 resolution sizing
 import { AppInterface, AppConfig } from '../types/app.js';
 import { createElement, addEventListenerWithCleanup } from '../utils/dom-helpers.js';
 
@@ -9,8 +9,8 @@ export class TerminalApp implements AppInterface {
     icon: '💻',
     category: 'system',
     windowConfig: {
-      width: 500,
-      height: 350,
+      width: 600, // Much larger for 1995 resolution
+      height: 420,
       resizable: true
     }
   };
@@ -109,10 +109,10 @@ export class TerminalApp implements AppInterface {
 
     switch (cmd) {
       case 'help':
-        return 'Available commands: help, ls, pwd, whoami, uname, clear, date, cat, echo, ps, uptime, fortune';
+        return 'Available commands: help, ls, pwd, whoami, uname, clear, date, cat, echo, ps, uptime, fortune, top, free, df';
       
       case 'ls':
-        return 'Documents  Downloads  Desktop  Pictures  readme.txt  todo.txt  secret_linux_wallpaper.jpg';
+        return 'Documents/  Downloads/  Desktop/  Pictures/  Mail/\nreadme.txt  todo.txt  .xinitrc  .fvwmrc  secret_linux_wallpaper.jpg';
       
       case 'pwd':
         return '/home/user';
@@ -121,10 +121,11 @@ export class TerminalApp implements AppInterface {
         return 'user';
       
       case 'uname':
-        return 'Linux linux95 2.0.35 #1 i486 Linux 95';
+        return 'Linux linux95 1.2.13 #1 Wed Jan 18 12:34:56 PST 1995 i486 unknown';
       
       case 'date':
-        return new Date().toString();
+        const now = new Date();
+        return `Wed Jan 18 ${now.toTimeString().substring(0, 8)} PST 1995`;
       
       case 'cat':
         return this.catCommand(args[0]);
@@ -133,10 +134,19 @@ export class TerminalApp implements AppInterface {
         return args.join(' ');
       
       case 'ps':
-        return 'PID TTY      TIME CMD\n1234 pts/0    00:00:01 bash\n5678 pts/0    00:00:00 ps';
+        return 'PID TTY      TIME CMD\n  1 console    0:01 init\n 12 console    0:00 kflushd\n 13 console    0:00 kswapd\n134 tty1       0:01 bash\n234 tty1       0:00 ps';
       
       case 'uptime':
-        return '12:34:56 up 1 day, 2:34, 1 user, load average: 0.15, 0.10, 0.05';
+        return '12:34pm  up 1 day, 2:34, 1 user, load average: 0.15, 0.10, 0.05';
+      
+      case 'top':
+        return 'Linux 95 - 12:34pm up 1 day, load: 0.15\n\nPID USER     PRI  SIZE  RES STATE   TIME   WCPU    CPU COMMAND\n  1 root      1    48    0 sleep   0:01  0.00%  0.00% init\n 12 root      6     0    0 sleep   0:00  0.00%  0.00% kflushd';
+      
+      case 'free':
+        return '             total       used       free     shared    buffers     cached\nMem:         16384       8192       8192          0        512       2048\nSwap:        32768          0      32768';
+      
+      case 'df':
+        return 'Filesystem     1k-blocks    Used Available Use% Mounted on\n/dev/hda1         524288   65536    458752  13% /\n/dev/hda2        1048576  131072    917504  13% /home';
       
       case 'fortune':
         return this.getFortune();
@@ -155,9 +165,11 @@ export class TerminalApp implements AppInterface {
 
   private catCommand(filename: string): string {
     const files: Record<string, string> = {
-      'readme.txt': 'Welcome to Linux 95!\n\nThis is a retro desktop environment that brings back the nostalgic computing experience of 1995.',
-      'todo.txt': '- Check out the terminal\n- Play minesweeper\n- Write something in the text editor',
-      'secret_linux_wallpaper.jpg': 'This is a secret Linux wallpaper! 🐧\n(It\'s actually a text file, but shh...)'
+      'readme.txt': 'Welcome to Linux 95!\n\nThis is an authentic recreation of a 1995 Linux desktop environment.\nFeatures:\n- FVWM window manager\n- X11 applications\n- Virtual desktops\n- Classic Unix tools\n\nEnjoy your journey back to 1995!',
+      'todo.txt': 'Things to do in Linux 95:\n- Check out XEyes\n- Try the calculator\n- Browse with Mosaic\n- Read email with Pine\n- Play XMines\n- Edit files with xedit',
+      '.xinitrc': 'xset +fp /usr/X11R6/lib/X11/fonts/misc/\nxset +fp /usr/X11R6/lib/X11/fonts/75dpi/\nfvwm &\nxclock -geometry 64x64+0+0 &\nxterm -geometry 80x24+100+100 &',
+      '.fvwmrc': '# FVWM Configuration for Linux 95\nDeskTopSize 2x2\nMenuStyle * Foreground black, Background grey\nStyle "*" Icon unknown1.xpm',
+      'secret_linux_wallpaper.jpg': 'ASCII Art Penguin:\n     .--.\n    |o_o |\n    |:_/ |\n   //   \\ \\\n  (|     | )\n /\'\_   _/`\\\n \\___)=(___/\n\n(This is actually a text file with ASCII art!)'
     };
 
     return files[filename] || `cat: ${filename}: No such file or directory`;
@@ -166,10 +178,14 @@ export class TerminalApp implements AppInterface {
   private getFortune(): string {
     const fortunes = [
       "Linux 95: Because sometimes newer isn't better!",
-      "In 1995, we thought 8MB of RAM was luxurious.",
+      "In 1995, we thought 16MB of RAM was luxurious.",
       "The future is retro, and retro is the future.",
       "Y2K is still 5 years away - plenty of time to worry!",
-      "Remember when installing software meant 20 floppy disks?"
+      "Remember when installing software meant 20 floppy disks?",
+      "X11 + FVWM = The perfect desktop environment",
+      "Pine for email, Mosaic for web - what more do you need?",
+      "Virtual desktops: the original workspace switcher",
+      "When mice had balls and modems sang songs"
     ];
     return fortunes[Math.floor(Math.random() * fortunes.length)];
   }

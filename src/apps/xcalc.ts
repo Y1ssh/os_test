@@ -9,8 +9,8 @@ export class XCalcApp implements AppInterface {
     icon: '🧮',
     category: 'utility',
     windowConfig: {
-      width: 200,
-      height: 280,
+      width: 260, // Larger for better usability
+      height: 360,
       resizable: false
     }
   };

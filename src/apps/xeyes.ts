@@ -9,8 +9,8 @@ export class XEyesApp implements AppInterface {
     icon: '👀',
     category: 'utility',
     windowConfig: {
-      width: 200,
-      height: 150,
+      width: 280, // Larger for better visibility
+      height: 200,
       resizable: false
     }
   };
@@ -59,7 +59,7 @@ export class XEyesApp implements AppInterface {
         const angle = Math.atan2(deltaY, deltaX);
         
         // Calculate pupil position (constrained to eye bounds)
-        const maxDistance = 20; // Maximum distance pupil can move from center
+        const maxDistance = 26; // Maximum distance pupil can move from center (bigger for larger eyes)
         const distance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 10, maxDistance);
         
         const pupilX = Math.cos(angle) * distance;
