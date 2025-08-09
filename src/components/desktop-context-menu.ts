@@ -44,7 +44,7 @@ export class DesktopContextMenu {
     const menu = createElement('div', 'desktop-menu');
     
     const menuItems = [
-      { id: 'terminal', title: 'XTerm', icon: '💻' },
+      { id: 'terminal', title: 'Open XTerm', icon: '💻' },
       { id: 'fileManager', title: 'File Manager', icon: '📁' },
       { separator: true },
       { id: 'xcalc', title: 'Calculator', icon: '🧮' },
@@ -53,7 +53,11 @@ export class DesktopContextMenu {
       { id: 'mosaic', title: 'NCSA Mosaic', icon: '🌐' },
       { id: 'pine', title: 'Pine Mail', icon: '📧' },
       { separator: true },
-      { action: 'properties', title: 'Properties...', icon: '⚙️' },
+      { id: 'textEditor', title: 'Text Editor', icon: '📝' },
+      { id: 'imageViewer', title: 'Image Viewer', icon: '🖼️' },
+      { id: 'minesweeper', title: 'XMines', icon: '💣' },
+      { separator: true },
+      { action: 'properties', title: 'Desktop Properties...', icon: '⚙️' },
       { action: 'refresh', title: 'Refresh Desktop', icon: '🔄' }
     ];
 
@@ -113,6 +117,8 @@ export class DesktopContextMenu {
             <p><strong>Window Manager:</strong> FVWM</p>
             <p><strong>Display:</strong> :0.0 (1024x768x8)</p>
             <p><strong>Virtual Desktops:</strong> 4</p>
+            <p><strong>Memory:</strong> 16MB RAM</p>
+            <p><strong>Kernel:</strong> Linux 1.2.13</p>
           </div>
           <div class="x11-error-buttons">
             <button class="close-props">OK</button>
@@ -133,7 +139,7 @@ export class DesktopContextMenu {
     // Simple refresh animation
     const desktop = document.querySelector('.desktop') as HTMLElement;
     if (desktop) {
-      desktop.style.opacity = '0.5';
+      desktop.style.opacity = '0.8';
       setTimeout(() => {
         desktop.style.opacity = '1';
       }, 200);

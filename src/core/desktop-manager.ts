@@ -11,6 +11,7 @@ export class DesktopManager {
   private contextMenu!: DesktopContextMenu;
   private isInitialized = false;
   private cleanupTasks: (() => void)[] = [];
+  private selectedIcon: HTMLElement | null = null;
 
   async init(): Promise<void> {
     if (this.isInitialized) return;
@@ -84,36 +85,53 @@ export class DesktopManager {
   }
 
   private setupLinuxDesktopIcons(): void {
-    // Update desktop icons to authentic Linux applications
-    const iconMappings = [
-      { selector: '[data-app="netscape"]', newApp: 'mosaic', newTitle: 'NCSA Mosaic' },
-      { selector: '[data-app="aiChat"]', newApp: 'pine', newTitle: 'Pine Mail' },
-      { selector: '[data-app="audioPlayer"]', newApp: 'xcalc', newTitle: 'Calculator' },
-      { selector: '[data-app="xmines"]', newApp: 'xeyes', newTitle: 'XEyes' }
-    ];
-
-    iconMappings.forEach(mapping => {
-      const icon = document.querySelector(mapping.selector) as HTMLElement;
-      if (icon) {
-        icon.dataset.app = mapping.newApp;
-        const span = icon.querySelector('span');
-        if (span) span.textContent = mapping.newTitle;
-      }
-    });
-
     // Add trash icon if it doesn't exist
     this.addTrashIcon();
 
-    // Setup double-click handlers for desktop icons
+    // Setup icon interactions
     const iconElements = document.querySelectorAll('.icon[data-app]');
     iconElements.forEach(iconEl => {
-      const appId = (iconEl as HTMLElement).dataset.app;
-      if (appId) {
-        iconEl.addEventListener('dblclick', () => {
-          this.openApp(appId);
-        });
-      }
+      const icon = iconEl as HTMLElement;
+      const appId = icon.dataset.app;
+      if (!appId) return;
+
+      // Single click selection
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.selectIcon(icon);
+      });
+
+      // Double-click to open
+      icon.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        this.openApp(appId);
+      });
     });
+
+    // Desktop click to deselect icons
+    const desktop = document.querySelector('.desktop');
+    if (desktop) {
+      desktop.addEventListener('click', (e) => {
+        if (e.target === desktop) {
+          this.deselectAllIcons();
+        }
+      });
+    }
+  }
+
+  private selectIcon(icon: HTMLElement): void {
+    // Deselect previous icon
+    this.deselectAllIcons();
+    
+    // Select new icon
+    icon.classList.add('selected');
+    this.selectedIcon = icon;
+  }
+
+  private deselectAllIcons(): void {
+    const icons = document.querySelectorAll('.icon.selected');
+    icons.forEach(icon => icon.classList.remove('selected'));
+    this.selectedIcon = null;
   }
 
   private addTrashIcon(): void {
@@ -128,7 +146,14 @@ export class DesktopManager {
       <span>Trash</span>
     `;
 
-    trashIcon.addEventListener('dblclick', () => {
+    // Add to icon setup
+    trashIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.selectIcon(trashIcon);
+    });
+
+    trashIcon.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
       this.openTrash();
     });
 
@@ -158,6 +183,21 @@ export class DesktopManager {
     eventBus.on('desktop:switched', ({ desktop }) => {
       console.log(`Switched to virtual desktop ${desktop + 1}`);
     });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Delete key to open trash
+      if (e.key === 'Delete' && this.selectedIcon?.dataset.app === 'trash') {
+        this.openTrash();
+      }
+      // Enter key to open selected icon
+      if (e.key === 'Enter' && this.selectedIcon) {
+        const appId = this.selectedIcon.dataset.app;
+        if (appId) {
+          this.openApp(appId);
+        }
+      }
+    });
   }
 
   private openTrash(): void {
@@ -165,10 +205,11 @@ export class DesktopManager {
     const trashContent = document.createElement('div');
     trashContent.innerHTML = `
       <div class="x11-error">
-        <div class="x11-error-title">Trash</div>
+        <div class="x11-error-title">Trash Can</div>
         <div class="x11-error-message">
-          <p>The trash is empty.</p>
-          <p>Drag files here to delete them.</p>
+          <p>The trash can is empty.</p>
+          <p>Items deleted from the desktop will appear here.</p>
+          <p><em>Note: This is a simulated trash can for demonstration purposes.</em></p>
         </div>
         <div class="x11-error-buttons">
           <button onclick="this.closest('.x11-error').remove()">OK</button>
@@ -194,6 +235,29 @@ export class DesktopManager {
       await appRegistry.openApp(appId);
     } catch (error) {
       console.error(`Failed to open app ${appId}:`, error);
+      
+      // Show error dialog
+      const errorDialog = document.createElement('div');
+      errorDialog.innerHTML = `
+        <div class="x11-error">
+          <div class="x11-error-title">Application Error</div>
+          <div class="x11-error-message">
+            <p>Could not launch application: ${appId}</p>
+            <p>The application may not be available or there was an error loading it.</p>
+          </div>
+          <div class="x11-error-buttons">
+            <button onclick="this.closest('.x11-error').remove()">OK</button>
+          </div>
+        </div>
+      `;
+      
+      errorDialog.style.position = 'fixed';
+      errorDialog.style.top = '50%';
+      errorDialog.style.left = '50%';
+      errorDialog.style.transform = 'translate(-50%, -50())';
+      errorDialog.style.zIndex = '2000';
+      
+      document.body.appendChild(errorDialog);
     }
   }
 

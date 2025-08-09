@@ -17,11 +17,11 @@ body {
 /* Desktop Layout - Standard X11 Gray */
 .desktop {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 30px); /* Reserve space for panel */
   overflow: hidden;
   position: relative;
   cursor: default;
-  padding: 15px 15px 40px 15px; /* Space for panel */
+  padding: 15px 15px 15px 15px;
   background: var(--linux-bg); /* Standard X11 gray */
 }
 
@@ -31,21 +31,29 @@ body {
   background: var(--window-bg);
   border: 2px outset var(--window-bg);
   z-index: var(--z-context-menu);
-  min-width: 120px;
+  min-width: 150px;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
   font-family: var(--font-motif);
   font-size: 12px;
 }
 
 .menu-item {
-  padding: 4px 16px 4px 8px;
+  padding: 4px 16px 4px 24px;
   cursor: pointer;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .menu-item:hover {
   background: var(--accent);
   color: var(--text-light);
+}
+
+.menu-icon {
+  width: 16px;
+  text-align: center;
 }
 
 .menu-separator {
@@ -69,6 +77,7 @@ body {
   padding: 2px 4px;
   z-index: var(--z-panel);
   font-size: 11px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
 }
 
 .panel-pager {
@@ -85,10 +94,17 @@ body {
   border: 1px solid var(--raised-dark);
   background: #A0A0A0;
   position: relative;
+  cursor: pointer;
+  margin: 1px;
+}
+
+.virtual-desktop:hover {
+  background: #B0B0B0;
 }
 
 .virtual-desktop.active {
   background: #E0E0E0;
+  border: 1px solid var(--accent);
 }
 
 .panel-apps {
@@ -96,14 +112,18 @@ body {
   display: flex;
   gap: 2px;
   margin-left: 8px;
+  overflow-x: auto;
 }
 
 .panel-clock {
   padding: 2px 8px;
   border: 2px inset var(--window-bg);
   background: var(--window-bg);
-  font-size: 10px;
+  font-size: 9px;
   font-family: var(--font-mono);
+  min-width: 80px;
+  text-align: center;
+  line-height: 1.1;
 }
 
 /* Icon Grid Layout - X11 style */
@@ -115,21 +135,31 @@ body {
   cursor: pointer;
   width: 64px;
   text-align: center;
+  padding: 4px;
+  border-radius: 2px;
+  transition: background-color 0.1s ease;
 }
 
 .icon:hover {
   background-color: var(--selection-bg);
   border: 1px solid var(--selection-border);
+  padding: 3px; /* Adjust for border */
 }
 
 .icon.selected {
   background-color: var(--accent);
   border: 1px solid var(--text-light);
+  padding: 3px; /* Adjust for border */
 }
 
 .icon.selected span {
   color: var(--text-light);
   background-color: var(--accent);
+}
+
+/* Improve icon interaction feedback */
+.icon:active {
+  transform: translateY(1px);
 }
 
 /* Modal Layout */

@@ -35,8 +35,9 @@
   --terminal-text: #00FF00; /* Classic green on black */
   --terminal-cursor: #FFFFFF;
   
-  /* Z-Index Layers */
+  /* Z-Index Layers - Properly ordered */
   --z-desktop: 1;
+  --z-icons: 10;
   --z-windows: 100;
   --z-panel: 1000;
   --z-context-menu: 1100;
