@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Linux 95 Desktop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@0.7.0",
+          "@tailwindcss/browser": "https://esm.sh/@tailwindcss/browser@^4.1.3"
+        }
+      }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div class="desktop" id="desktop">
+      <!-- Desktop Icons -->
+      <div class="icon" data-app="fileManager">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23C0C0C0' stroke='%23000' stroke-width='1'/%3E%3Crect x='4' y='8' width='40' height='32' fill='%23FFFF80' stroke='%23000'/%3E%3Crect x='4' y='8' width='16' height='8' fill='%23FFD700' stroke='%23000'/%3E%3Ctext x='24' y='26' font-family='monospace' font-size='6' fill='%23000'%3EFILES%3C/text%3E%3C/svg%3E"
+          alt="File Manager"
+          style="width: 48px; height: 48px"
+        />
+        <span>File Manager</span>
+      </div>
+      <div class="icon" data-app="terminal">
+        <img 
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23000' stroke='%23808080' stroke-width='2'/%3E%3Crect x='2' y='2' width='44' height='44' fill='%23000'/%3E%3Ctext x='4' y='12' font-family='monospace' font-size='4' fill='%2300FF00'%3E$&gt; ls -la%3C/text%3E%3Ctext x='4' y='18' font-family='monospace' font-size='4' fill='%2300FF00'%3Edrwx------%3C/text%3E%3Ctext x='4' y='24' font-family='monospace' font-size='4' fill='%2300FF00'%3E-rw-r--r--%3C/text%3E%3Crect x='40' y='40' width='4' height='6' fill='%2300FF00'/%3E%3C/svg%3E" 
+          alt="Terminal" 
+        />
+        <span>XTerm</span>
+      </div>
+      <div class="icon" data-app="textEditor">
+        <img 
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23FFFFFF' stroke='%23000' stroke-width='2'/%3E%3Crect x='4' y='4' width='40' height='40' fill='%23FFFFFF'/%3E%3Cline x1='8' y1='12' x2='40' y2='12' stroke='%23000' stroke-width='1'/%3E%3Cline x1='8' y1='16' x2='32' y2='16' stroke='%23000' stroke-width='1'/%3E%3Cline x1='8' y1='20' x2='36' y2='20' stroke='%23000' stroke-width='1'/%3E%3Cline x1='8' y1='24' x2='28' y2='24' stroke='%23000' stroke-width='1'/%3E%3Cline x1='8' y1='28' x2='38' y2='28' stroke='%23000' stroke-width='1'/%3E%3Crect x='8' y='32' width='2' height='8' fill='%23000'/%3E%3C/svg%3E" 
+          alt="Text Editor" 
+        />
+        <span>Text Editor</span>
+      </div>
+      <div class="icon" data-app="imageViewer">
+        <img 
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23C0C0C0' stroke='%23000' stroke-width='2'/%3E%3Crect x='4' y='8' width='40' height='32' fill='%23000' stroke='%23808080'/%3E%3Crect x='8' y='12' width='32' height='24' fill='%234080FF'/%3E%3Ccircle cx='32' cy='18' r='4' fill='%23FFFF00'/%3E%3Cpolygon points='12,32 20,20 28,28 36,24 40,32' fill='%2300AA00'/%3E%3C/svg%3E" 
+          alt="Image Viewer" 
+        />
+        <span>XV Image</span>
+      </div>
+      <div class="icon" data-app="netscape">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%234169E1' stroke='%23000' stroke-width='2'/%3E%3Ctext x='24' y='14' font-family='serif' font-size='8' fill='%23FFF' text-anchor='middle'%3EN%3C/text%3E%3Crect x='8' y='18' width='32' height='20' fill='%23FFF' stroke='%23000'/%3E%3Ctext x='12' y='26' font-family='monospace' font-size='4' fill='%23000'%3Ehttp://www%3C/text%3E%3Ctext x='12' y='30' font-family='monospace' font-size='4' fill='%23000'%3E.example.com%3C/text%3E%3Crect x='12' y='32' width='24' height='4' fill='%23E0E0E0'/%3E%3C/svg%3E"
+          alt="Netscape"
+        />
+        <span>Netscape</span>
+      </div>
+      <div class="icon" data-app="aiChat">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23808080' stroke='%23000' stroke-width='2'/%3E%3Ccircle cx='24' cy='20' r='12' fill='%23C0C0C0' stroke='%23000'/%3E%3Ccircle cx='20' cy='18' r='2' fill='%23000'/%3E%3Ccircle cx='28' cy='18' r='2' fill='%23000'/%3E%3Cpath d='M18,24 Q24,28 30,24' stroke='%23000' stroke-width='2' fill='none'/%3E%3Crect x='12' y='36' width='24' height='8' fill='%23FFF' stroke='%23000'/%3E%3Ctext x='24' y='41' font-family='monospace' font-size='4' fill='%23000' text-anchor='middle'%3EAI CHAT%3C/text%3E%3C/svg%3E"
+          alt="AI Chat"
+        />
+        <span>AI Assistant</span>
+      </div>
+      <div class="icon" data-app="xmines">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23C0C0C0' stroke='%23000' stroke-width='2'/%3E%3Cg transform='translate(8,8)'%3E%3Crect x='0' y='0' width='8' height='8' fill='%23C0C0C0' stroke='%23808080'/%3E%3Crect x='8' y='0' width='8' height='8' fill='%23C0C0C0' stroke='%23808080'/%3E%3Crect x='16' y='0' width='8' height='8' fill='%23C0C0C0' stroke='%23808080'/%3E%3Crect x='24' y='0' width='8' height='8' fill='%23C0C0C0' stroke='%23808080'/%3E%3Crect x='0' y='8' width='8' height='8' fill='%23808080' stroke='%23404040'/%3E%3Ctext x='4' y='14' font-family='monospace' font-size='6' fill='%23000' text-anchor='middle'%3E1%3C/text%3E%3Crect x='8' y='8' width='8' height='8' fill='%23808080' stroke='%23404040'/%3E%3Ctext x='12' y='14' font-family='monospace' font-size='6' fill='%23000' text-anchor='middle'%3E2%3C/text%3E%3Crect x='16' y='8' width='8' height='8' fill='%23FF0000'/%3E%3Ccircle cx='20' cy='12' r='3' fill='%23000'/%3E%3C/g%3E%3C/svg%3E"
+          alt="Minesweeper"
+          style="width: 48px; height: 48px"
+        />
+        <span>XMines</span>
+      </div>
+      <div class="icon" data-app="audioPlayer">
+        <img
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23808080' stroke='%23000' stroke-width='2'/%3E%3Crect x='4' y='8' width='40' height='24' fill='%23000'/%3E%3Crect x='8' y='12' width='4' height='16' fill='%2300FF00'/%3E%3Crect x='14' y='10' width='4' height='18' fill='%2300FF00'/%3E%3Crect x='20' y='14' width='4' height='14' fill='%2300FF00'/%3E%3Crect x='26' y='16' width='4' height='12' fill='%2300FF00'/%3E%3Crect x='32' y='12' width='4' height='16' fill='%2300FF00'/%3E%3Crect x='10' y='36' width='8' height='6' fill='%23C0C0C0' stroke='%23000'/%3E%3Ctext x='14' y='40' font-family='monospace' font-size='4' text-anchor='middle'%3E▶%3C/text%3E%3Crect x='20' y='36' width='8' height='6' fill='%23C0C0C0' stroke='%23000'/%3E%3Ctext x='24' y='40' font-family='monospace' font-size='4' text-anchor='middle'%3E⏸%3C/text%3E%3Crect x='30' y='36' width='8' height='6' fill='%23C0C0C0' stroke='%23000'/%3E%3Ctext x='34' y='40' font-family='monospace' font-size='4' text-anchor='middle'%3E⏹%3C/text%3E%3C/svg%3E"
+          alt="Audio Player"
+          style="width: 48px; height: 48px"
+        />
+        <span>XMMS</span>
+      </div>
+
+
+      <!-- Windows -->
+      <div class="window resizable" id="fileManager">
+        <div class="window-titlebar">
+          <span class="window-title">File Manager</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content" style="background-color: white">
+          <div id="home-dir-icon" class="window-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767035.png" alt="Home Directory" />
+            <span>/home/user</span>
+          </div>
+          <div id="root-dir-icon" class="window-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="Root Directory" />
+            <span>/</span>
+          </div>
+          <div id="home-dir-content" style="display: none">
+            <div id="secret-image-icon" class="window-icon">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3767/3767094.png"
+                alt="Secret File"
+              />
+              <span>secret_linux<br />wallpaper.jpg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="window resizable" id="netscape">
+        <div class="window-titlebar">
+          <span class="window-title">Netscape Navigator</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content">
+          <div class="browser-toolbar">
+            <div class="address-bar-container">
+              <input
+                type="text"
+                class="browser-address-bar"
+                placeholder="Location: http://"
+                value="http://www.yahoo.com"
+              />
+              <button class="browser-go-button">Go</button>
+            </div>
+          </div>
+          <div class="browser-viewport">
+            <iframe
+              id="browser-frame"
+              src="https://web.archive.org/web/19961017235908/http://www2.yahoo.com/"
+              width="100%"
+              height="100%"
+            ></iframe>
+            <div class="browser-loading">
+              Loading page...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="window resizable" id="textEditor">
+        <div class="window-titlebar">
+          <span class="window-title">Text Editor - untitled</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content">
+          <div class="editor-menu">
+            <button class="editor-ai-button">AI Assist</button>
+            <button class="editor-save-button">Save</button>
+          </div>
+          <textarea
+            class="editor-textarea"
+            style="
+              width: 100%;
+              height: calc(100% - 30px);
+              border: none;
+              outline: none;
+              resize: none;
+              background-color: white;
+              border: 1px solid #808080;
+              font-family: 'Courier New', monospace;
+            "
+            placeholder="# Welcome to Linux 95 Text Editor&#10;# Use AI Assist for content generation"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="window resizable" id="terminal">
+        <div class="window-titlebar">
+          <span class="window-title">XTerm</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content terminal-content">
+          <div class="terminal-output" id="terminal-output">
+            <div class="terminal-line">Linux 95 Desktop Environment v1.0</div>
+            <div class="terminal-line">Copyright (C) 1995 Linux 95 Project</div>
+            <div class="terminal-line">Type 'help' for a list of commands.</div>
+            <div class="terminal-line">&nbsp;</div>
+            <div class="terminal-prompt">user@linux95:~$ <span class="terminal-cursor">_</span></div>
+          </div>
+          <input type="text" class="terminal-input" id="terminal-input" style="opacity: 0; position: absolute; left: -9999px;" />
+        </div>
+      </div>
+
+      <div class="window resizable" id="imageViewer" style="width: 350px; height: 300px">
+        <div class="window-titlebar">
+          <span class="window-title" id="image-viewer-title">XV - Image Viewer</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div
+          class="window-content image-viewer-content"
+          style="
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #808080;
+          "
+        >
+          <img
+            id="image-viewer-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/512px-Tux.svg.png"
+            alt="Tux Linux Mascot"
+            style="max-width: 100%; max-height: 100%; object-fit: contain"
+          />
+        </div>
+              </div>
+
+               <div class="window resizable" id="aiChat">
+        <div class="window-titlebar">
+          <span class="window-title">AI Assistant</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content ai-chat-content">
+          <div class="ai-chat-history">
+            <div class="ai-message">Welcome to Linux 95 AI Assistant! How can I help you today?</div>
+          </div>
+          <div class="ai-chat-input-area">
+            <input type="text" class="ai-chat-input" placeholder="Ask me anything..." />
+            <button class="ai-chat-send">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="window resizable" id="xmines" style="width: 400px; height: 450px">
+        <div class="window-titlebar">
+          <span class="window-title">XMines</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div
+          class="window-content minesweeper-content"
+          style="
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            background-color: #c0c0c0;
+          "
+        >
+          <div class="minesweeper-controls">
+            <div class="minesweeper-info minesweeper-flag-count">🚩 10</div>
+            <button class="minesweeper-reset-button">🙂</button>
+            <div class="minesweeper-info minesweeper-timer">⏱️ 0</div>
+          </div>
+          <div class="minesweeper-hint-area">
+            <button class="minesweeper-hint-button">💡 AI Hint</button>
+            <div class="minesweeper-commentary">Welcome to XMines! Click to start.</div>
+          </div>
+          <div class="minesweeper-grid-container">
+            <div class="minesweeper-grid" id="minesweeper-board">
+            </div>
+          </div>
+        </div>
+      </div>
+
+             <div class="window resizable" id="audioPlayer" style="width: 420px; height: 300px;">
+        <div class="window-titlebar">
+          <span class="window-title">XMMS - Audio Player</span>
+          <div class="window-controls">
+            <div class="window-minimize window-control-button">−</div>
+            <div class="window-close window-control-button">✕</div>
+          </div>
+        </div>
+        <div class="window-content audio-player-content">
+          <div class="audio-player-display">
+            <div class="audio-track-info">♪ No track loaded</div>
+            <div class="audio-visualizer">
+              <div class="visualizer-bar"></div>
+              <div class="visualizer-bar"></div>
+              <div class="visualizer-bar"></div>
+              <div class="visualizer-bar"></div>
+              <div class="visualizer-bar"></div>
+            </div>
+          </div>
+          <div class="audio-player-controls">
+            <button class="audio-control-button" title="Previous">⏮</button>
+            <button class="audio-control-button" title="Play">▶</button>
+            <button class="audio-control-button" title="Pause">⏸</button>
+            <button class="audio-control-button" title="Stop">⏹</button>
+            <button class="audio-control-button" title="Next">⏭</button>
+          </div>
+          <div class="audio-player-volume">
+            <span>Volume:</span>
+            <input type="range" class="volume-slider" min="0" max="100" value="50" />
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Start Menu -->
+      <div class="start-menu" id="start-menu">
+        <div class="start-menu-item" data-app="fileManager">File Manager</div>
+        <div class="start-menu-item" data-app="terminal">XTerm</div>
+        <div class="start-menu-item" data-app="textEditor">Text Editor</div>
+        <div class="start-menu-item" data-app="imageViewer">XV Image</div>
+        <div class="start-menu-item" data-app="netscape">Netscape</div>
+        <div class="start-menu-item" data-app="aiChat">AI Assistant</div>
+        <div class="start-menu-item" data-app="xmines">XMines</div>
+        <div class="start-menu-item" data-app="audioPlayer">XMMS</div>
+      </div>
+
+      <!-- Taskbar -->
+      <div id="taskbar">
+        <button id="start-button">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/512px-Tux.svg.png"
+            alt="Start"
+            style="width: 20px; height: 20px; margin-right: 5px;"
+          />
+          Menu
+        </button>
+        <div id="taskbar-apps">
+        </div>
+      </div>
+
+      <div id="paint-assistant">
+        <div class="assistant-bubble">Thinking...</div>
+        <img
+          src="https://storage.googleapis.com/gemini-95-icons/robot-assistant.gif"
+          alt="Paint Assistant"
+          class="assistant-image"
+        />
+      </div>
+    </div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
