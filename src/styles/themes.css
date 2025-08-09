@@ -1,43 +1,44 @@
-/* Linux 95 Theme Variables */
+/* Authentic 1995 Linux X11/Motif Theme Variables */
 :root {
-  /* Core Colors */
-  --linux-bg: #2F4F4F;
-  --window-bg: #C0C0C0;
-  --accent: #000080;
+  /* Core Colors - Standard X11 Gray Scheme */
+  --linux-bg: #C0C0C0; /* Standard X11 background gray */
+  --window-bg: #C0C0C0; /* All windows use same gray */
+  --accent: #000080; /* Dark blue for selections */
   --text-primary: #000000;
   --text-light: #FFFFFF;
   
-  /* Window 3D Effects */
-  --raised-light: #DFDFDF;
-  --raised-dark: #404040;
-  --pressed-light: #808080;
-  --pressed-dark: #000000;
+  /* Authentic X11 3D Effects */
+  --raised-light: #FFFFFF; /* Top/left borders */
+  --raised-dark: #808080; /* Bottom/right borders */
+  --pressed-light: #808080; /* Pressed top/left */
+  --pressed-dark: #000000; /* Pressed bottom/right */
+  --shadow-dark: #404040; /* Deep shadows */
   
   /* Interactive Colors */
-  --selection-bg: rgba(0, 0, 128, 0.2);
-  --selection-border: rgba(255, 255, 255, 0.7);
+  --selection-bg: rgba(0, 0, 128, 0.3);
+  --selection-border: rgba(255, 255, 255, 0.8);
   --hover-bg: rgba(0, 0, 128, 0.1);
   
-  /* Typography */
-  --font-system: 'MS Sans Serif', 'Tahoma', sans-serif;
-  --font-mono: 'Lucida Console', 'Courier New', monospace;
-  --font-symbols: 'Marlett', system-ui;
+  /* Typography - Authentic X11 Fonts */
+  --font-system: 'Helvetica', 'Arial', sans-serif; /* X11 default */
+  --font-mono: 'Courier', 'Courier New', monospace;
+  --font-motif: 'Helvetica', 'Arial', sans-serif; /* Motif widgets */
   
-  /* Sizes */
-  --window-titlebar-height: 18px;
-  --taskbar-height: 28px;
+  /* Sizes - X11/Motif Standards */
+  --window-titlebar-height: 20px; /* Motif standard */
+  --panel-height: 30px; /* Panel, not taskbar */
   --icon-size: 48px;
-  --button-padding: 2px 4px;
+  --button-padding: 4px 8px; /* More generous Motif padding */
   
-  /* Terminal Colors */
+  /* Terminal Colors - X11 XTerm defaults */
   --terminal-bg: #000000;
-  --terminal-text: #00FF00;
+  --terminal-text: #00FF00; /* Classic green on black */
   --terminal-cursor: #FFFFFF;
   
   /* Z-Index Layers */
   --z-desktop: 1;
   --z-windows: 100;
-  --z-taskbar: 1000;
-  --z-start-menu: 1100;
+  --z-panel: 1000;
+  --z-context-menu: 1100;
   --z-modals: 2000;
 } 

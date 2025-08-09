@@ -1,4 +1,4 @@
-/* Linux 95 Desktop Layout */
+/* Authentic 1995 Linux X11 Desktop Layout */
 
 /* Global Reset */
 * {
@@ -14,78 +14,122 @@ body {
   user-select: none;
 }
 
-/* Desktop Layout */
+/* Desktop Layout - Standard X11 Gray */
 .desktop {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   position: relative;
   cursor: default;
-  padding: 15px 15px 50px 15px;
-  background: var(--linux-bg);
+  padding: 15px 15px 40px 15px; /* Space for panel */
+  background: var(--linux-bg); /* Standard X11 gray */
 }
 
-/* Taskbar Layout */
-.taskbar {
+/* Desktop Context Menu (replaces Start Menu) */
+.desktop-menu {
+  position: fixed;
+  background: var(--window-bg);
+  border: 2px outset var(--window-bg);
+  z-index: var(--z-context-menu);
+  min-width: 120px;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-family: var(--font-motif);
+  font-size: 12px;
+}
+
+.menu-item {
+  padding: 4px 16px 4px 8px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.menu-item:hover {
+  background: var(--accent);
+  color: var(--text-light);
+}
+
+.menu-separator {
+  height: 1px;
+  background: var(--raised-dark);
+  margin: 2px 4px;
+  border-top: 1px solid var(--raised-light);
+}
+
+/* FVWM-style Panel (replaces Windows taskbar) */
+.fvwm-panel {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--taskbar-height);
+  height: var(--panel-height);
   background: var(--window-bg);
-  border-top: 2px solid var(--raised-light);
-  border-left: 2px solid var(--raised-light);
-  border-right: 2px solid var(--raised-dark);
-  border-bottom: 2px solid var(--raised-dark);
+  border-top: 2px outset var(--window-bg);
   display: flex;
   align-items: center;
-  padding: 2px;
-  z-index: var(--z-taskbar);
+  padding: 2px 4px;
+  z-index: var(--z-panel);
   font-size: 11px;
 }
 
-.taskbar-apps {
+.panel-pager {
+  width: 80px;
+  height: 24px;
+  border: 2px inset var(--window-bg);
+  background: var(--window-bg);
+  margin-right: 8px;
+  display: flex;
+}
+
+.virtual-desktop {
+  flex: 1;
+  border: 1px solid var(--raised-dark);
+  background: #A0A0A0;
+  position: relative;
+}
+
+.virtual-desktop.active {
+  background: #E0E0E0;
+}
+
+.panel-apps {
   flex: 1;
   display: flex;
   gap: 2px;
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
-.taskbar-clock {
+.panel-clock {
   padding: 2px 8px;
-  border-top: 1px solid var(--pressed-dark);
-  border-left: 1px solid var(--pressed-dark);
-  border-right: 1px solid var(--raised-light);
-  border-bottom: 1px solid var(--raised-light);
+  border: 2px inset var(--window-bg);
   background: var(--window-bg);
   font-size: 10px;
+  font-family: var(--font-mono);
 }
 
-/* Start Menu Layout */
-.start-menu {
-  position: fixed;
-  bottom: var(--taskbar-height);
-  left: 2px;
-  width: 200px;
-  background: var(--window-bg);
-  border-top: 2px solid var(--raised-light);
-  border-left: 2px solid var(--raised-light);
-  border-right: 2px solid var(--raised-dark);
-  border-bottom: 2px solid var(--raised-dark);
-  z-index: var(--z-start-menu);
-  padding: 4px 0;
-  font-size: 11px;
-}
-
-/* Icon Grid Layout */
+/* Icon Grid Layout - X11 style */
 .icon {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  margin: 12px 8px;
+  margin: 16px 12px;
   cursor: pointer;
-  width: 80px;
+  width: 64px;
   text-align: center;
+}
+
+.icon:hover {
+  background-color: var(--selection-bg);
+  border: 1px solid var(--selection-border);
+}
+
+.icon.selected {
+  background-color: var(--accent);
+  border: 1px solid var(--text-light);
+}
+
+.icon.selected span {
+  color: var(--text-light);
+  background-color: var(--accent);
 }
 
 /* Modal Layout */
@@ -95,7 +139,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(128, 128, 128, 0.5); /* X11 style overlay */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,10 +148,8 @@ body {
 
 .modal-content {
   background: var(--window-bg);
-  border-top: 2px solid var(--raised-light);
-  border-left: 2px solid var(--raised-light);
-  border-right: 2px solid var(--raised-dark);
-  border-bottom: 2px solid var(--raised-dark);
+  border: 2px outset var(--window-bg);
   max-width: 400px;
   min-width: 300px;
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
 } 
